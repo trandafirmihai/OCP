@@ -1,4 +1,4 @@
-package chapter4;
+package chapter4.functionalProgramming;
 
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;

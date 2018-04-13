@@ -1,4 +1,4 @@
-package chapter4;
+package chapter4.functionalProgramming;
 
 public interface Gorilla {
 	

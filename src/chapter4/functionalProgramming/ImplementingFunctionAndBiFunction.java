@@ -1,4 +1,4 @@
-package chapter4;
+package chapter4.functionalProgramming;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -11,7 +11,7 @@ public class ImplementingFunctionAndBiFunction {
 		// returning it
 		Function<String, Integer> f1 = String::length;
 		Function<String, Integer> f2 = x -> x.length();
-		System.out.println(f1.apply("cluck"));
+		System.out.println("This function calculates the lentgh of the String parameter: " + f1.apply("cluck"));
 		System.out.println(f2.apply("clucko"));
 
 		// The first two types in the BiFunction are the input types

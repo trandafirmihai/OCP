@@ -1,15 +1,25 @@
-package chapter4;
+package chapter4.streams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.BinaryOperator;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleToIntFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 public class UsingStreams {
@@ -171,6 +181,161 @@ public class UsingStreams {
 		bad.peek(l -> l.remove(0)).map(List::size).forEach(System.out::print); // 00
 		
 		// Putting together the Pipeline
+		// Java 7
+		List<String> names = Arrays.asList("Jennifer", "Daniel", "Mark", "Ginny", "Berta" );
+		List<String> filteredNames = new ArrayList<>();
+		for (String name : names) {
+			if(name.length() == 5) 
+				filteredNames.add(name);
+		}
+		Collections.sort(filteredNames);
+		Iterator<String> iter = filteredNames.iterator();
+		System.out.println();
+		if(iter.hasNext()) System.out.println("Name 1 is : "+ iter.next());
+		if(iter.hasNext()) System.out.println("Name 2 is : "+ iter.next());
+		
+		// Java 8
+		System.out.println("Filter and print a list in Java 8: ");
+		System.out.println("Focusing on what and not on how..");
+		names.stream().filter(n -> n.length() == 5).sorted().limit(2).forEach(System.out::println);
+		
+		// Generates an infinite Stream; an Exception Out of memory is thrown if run it
+//		Stream.generate(() -> "Elsa").filter(n -> n.length() == 4).sorted().limit(2).forEach(System.out::println);
+		// Prints Elsa two times
+		Stream.generate(() -> "Elsa").filter(n -> n.length() == 4).limit(2).sorted().forEach(System.out::println);
+		// Generate an infinnite Stream also and throws an Exception Out of memory
+//		Stream.generate(() -> "Olaf Lazisson").filter(n -> n.length() == 4).limit(2).sorted().forEach(System.out::println);
+		
+		Stream<Integer> infinite2 = Stream.iterate(1, x -> x + 1);
+		infinite2.limit(5).filter(x -> x % 2 == 1).forEach(System.out::print);
+		System.out.println();
+		infinite2 = Stream.iterate(1, x -> x + 1);
+		infinite2.limit(5).peek(System.out::print).filter(x -> x % 2 == 1).forEach(System.out::print);
+		System.out.println();
+		// Reversing the order of the intermediate operations changes the result:
+		infinite2 = Stream.iterate(1, x -> x + 1);
+		infinite2.filter(x -> x % 2 == 1).limit(5). forEach(System.out::print);
+		System.out.println();
+		infinite2 = Stream.iterate(1, x -> x + 1);
+		infinite2.filter(x -> x % 2 == 1).peek(System.out::print).limit(5). forEach(System.out::print);
+		System.out.println();
+		
+		// Working with primitives
+		Stream<Integer> intPrimitive = Stream.of(1, 2, 3);
+		System.out.println("Print primitives: " + intPrimitive.reduce(0, (s6, n)->s6+n));
+		intPrimitive = Stream.of(1, 2, 3);
+		System.out.println("Print primitives using IntStream: " + intPrimitive.mapToInt(x->x).sum());
+		IntStream intStream = IntStream.of(4, 5, 6);
+		OptionalDouble avg = intStream.average();
+		System.out.println("The average as double is: " + avg.getAsDouble());
+		
+		Stream<String> objStream = Stream.of("penguin", "fish");
+		IntStream intStream1 = objStream.mapToInt(s7 -> s7.length());
+		intStream1.forEach(System.out::println);
+		List<Integer> ints = Arrays.asList(2, 3, 4);
+		IntStream ints2 = ints.stream().flatMapToInt(x -> IntStream.of(6,7, 8,9));
+		ints.stream().forEach(System.out::print);
+		System.out.println();
+		ints2.forEach(System.out::print);
+		System.out.println();
+		
+		// Using Optional with Primitive Streams
+		IntStream intStream2 = IntStream.rangeClosed(1, 10);
+		OptionalDouble optionalDouble = intStream2.average();
+		optionalDouble.ifPresent(System.out::println);
+		System.out.println(optionalDouble.getAsDouble());
+		System.out.println(optionalDouble.orElseGet(() -> Double.NaN));
+		
+		LongStream longs = LongStream.of(5, 10);
+		long sum = longs.sum();
+		System.out.println("The sum of longs from stream is: " + sum);
+		
+		// Functional Interfaces for Primitives
+		// BooleanSupplier
+		BooleanSupplier b1 = () -> true;
+		BooleanSupplier b2 = () -> Math.random() > .5;
+		System.out.println("Boolean Supplier 1 is: " + b1.getAsBoolean());
+		System.out.println("Boolean Supplier 2 is: " + b2.getAsBoolean());
+		
+		// DoubleToInt functional interface
+		double d = 5.0;
+		DoubleToIntFunction dif = x -> (int)x / 2;
+		int intFromDouble = dif.applyAsInt(d);
+		System.out.println("int from double is: " + intFromDouble);
+		
+		// Advanced Stream Pipeline Concepts
+		List<String> cats = new ArrayList<>();
+		cats.add("Ridley");
+		cats.add("Cody");
+		Stream <String> streamOfCats = cats.stream();
+//		System.out.println("The no. of cats from stream is: " + streamOfCats.count());
+		//add to list after stream created from it
+		cats.add("Mice"); // this element can't be added if count were before called on the stream
+		System.out.println("The no. of cats from stream is: " + streamOfCats.count());
+		
+		// Chaining Optionals
+		// return the three digit number without functional programming
+		Optional<Integer> intOpt2 = Optional.of(333);
+		if(intOpt2.isPresent()) {
+			Integer num = intOpt2.get();
+			String str = "" + num;
+			if(str.length() == 3) {
+				System.out.println("The three digit no. is: " + str);
+			}
+		}
+		// return the three digit number with functional programming
+		Optional<Integer> intOpt = Optional.of(333);
+		intOpt.map(n -> ""+ n).filter(m -> m.length() == 3).ifPresent(System.out::println);
+		
+		Optional<String> stringOpt = Optional.of("string");
+		Optional<Integer> intOpt3 = stringOpt.map(String::length);
+		intOpt3.ifPresent(System.out::println);
+		
+		// Collecting Results
+		// using basic collectors
+		Stream<String> felines = Stream.of("lion", "cat", "tiger", "jaguar");
+		String joiningFelines = felines.collect(Collectors.joining(", "));
+		System.out.println("Joining elements of a Stream of Strings using Collectors: " + joiningFelines);
+		
+		felines = Stream.of("lion", "cat", "tiger", "jaguar");
+		Double avgLength = felines.collect(Collectors.averagingInt(String::length));
+		System.out.println("Calculating the average length of the stream elements: " + avgLength);
+		
+		felines = Stream.of("lion", "cat", "tiger", "jaguar");
+		TreeSet<String> treeSetFelines = felines.filter(f -> f.startsWith("j")).collect(Collectors.toCollection(TreeSet::new));
+		System.out.println("Convert Stream into a colection after filtering it: " + treeSetFelines);
+		
+		// collecting into maps
+		felines = Stream.of("lion", "cat", "tiger", "jaguar");
+//		Map<String, Integer> collectToMap = felines.collect(Collectors.toMap(f -> f, String::length));
+		Map<String, Integer> collectToMap = felines.collect(Collectors.toMap(Function.identity(), String::length)); 
+		System.out.println("Collecting to a map after applying two functions on a Stream elements: " + collectToMap);
+		// reverse the key value map pair
+		// BAD approach, because the length of the animals are different
+		felines = Stream.of("lion", "cat", "tiger", "jaguar");
+		Map<Integer, String> collectToMap1 = felines.collect(Collectors.toMap(String::length, Function.identity()));
+		System.out.println(collectToMap1);
+		// what if many lengths were the same; an Exception will be thrown
+		Stream<String> animals1 = Stream.of("lions", "bears", "wolves");
+		// concatenate  the ones with the same length
+		Map<Integer, String> collectToMap2 = animals1.collect(Collectors.toMap(String::length, Function.identity(), (a,b)-> a+", "+b));
+		System.out.println("Collecting to a map avoiding to duplicate a key " + collectToMap2);
+		System.out.println("The returning implementation of the Map it is not guaranteed: " + collectToMap2.getClass());
+		
+		animals1 = Stream.of("lions", "bears", "wolves");
+		TreeMap<Integer, String> collectToTreeMap = animals1.collect(Collectors.toMap(String::length, a -> a, (a, b) -> a+", "+b, TreeMap::new));
+		System.out.println("Collecting into a specified Map implementation: " + collectToTreeMap);
+		System.out.println("The class specified for this collection: " + collectToTreeMap.getClass());
+		
+		// Collecting using Grouping, Partitioning, Mapping
+		
+		
+		
+		
+		
+		
+		
+	
 		
 		
 	}

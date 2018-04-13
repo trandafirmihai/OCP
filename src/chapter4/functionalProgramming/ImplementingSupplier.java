@@ -1,4 +1,4 @@
-package chapter4;
+package chapter4.functionalProgramming;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
