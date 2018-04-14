@@ -328,16 +328,49 @@ public class UsingStreams {
 		System.out.println("The class specified for this collection: " + collectToTreeMap.getClass());
 		
 		// Collecting using Grouping, Partitioning, Mapping
+		animals1 = Stream.of("lions", "bears", "wolves");
+		Map<Integer, List<String>> mapGrouped = animals1.collect(Collectors.groupingBy(String::length));
+		System.out.println("Grouped Map is: " + mapGrouped);
+		animals1 = Stream.of("lions", "bears", "wolves", "ant", "ape");
+		Map<Boolean, List<String>> mapGrouped1 = animals1.collect(Collectors.groupingBy(ss -> ss.startsWith("a")));
+		System.out.println("Grouped Map by letter is: " + mapGrouped1);
 		
+		animals1 = Stream.of("lions", "bears", "wolves", "wolves", "ant", "ape", "ape");
+		Map<Integer, Set<String>> mapWithSetGrouped = animals1.collect(Collectors.groupingBy(String::length, Collectors.toSet()));
+		System.out.println("Map with Set grouped " + mapWithSetGrouped);
+		// Change the type of returned Map
+		animals1 = Stream.of("lions", "bears", "wolves", "wolves", "ant", "ape", "ape");
+		TreeMap<Integer, Set<String>> treeMapWithSetGrouped = animals1.collect(Collectors.groupingBy(String::length, TreeMap::new, Collectors.toSet()));
+		System.out.println("TreeMap with Set grouped is : " + treeMapWithSetGrouped);
 		
+		animals1 = Stream.of("lions", "bears", "wolves", "wolves", "ant", "ape", "ape");
+		TreeMap<Integer, List<String>> treeMapWithListGrouped = animals1.collect(Collectors.groupingBy(String::length, TreeMap::new, Collectors.toList()));
+		System.out.println("TreeMap with List grouped is : " + treeMapWithListGrouped);
 		
+		// Partitioning - splitting in two parts
+		animals1 = Stream.of("lions", "bears", "wolves", "ant", "ape");
+		Map<Boolean, List<String>> mapPartitioned = animals1.collect(Collectors.partitioningBy(ss -> ss.length() <= 5));
+		System.out.println("Partitioned Map is : " + mapPartitioned);
 		
+		animals1 = Stream.of("lions", "bears", "wolves", "ant", "ape");
+		Map<Boolean, List<String>> mapPartitioned2 = animals1.collect(Collectors.partitioningBy(ss -> ss.length() <= 7));
+		System.out.println("Partitioned Map is : " + mapPartitioned2);
 		
+		animals1 = Stream.of("lions", "bears", "wolves", "wolves", "ant", "ape", "ape");
+		Map<Boolean, Set<String>> mapWithSetPartitioned = animals1.collect(Collectors.partitioningBy(ss -> ss.length() <= 5, Collectors.toSet()));
+		System.out.println("Partitioned Map with Set is : " + mapWithSetPartitioned);
+		// Cannot change the type of returned Map like with groupingBy()
+		animals1 = Stream.of("lions", "bears", "wolves", "ant", "ape");
+		Map<Integer, Long> mapGrouped2 = animals1.collect(Collectors.groupingBy(String::length, Collectors.counting()));
+		System.out.println("Map grouped by counting is : " + mapGrouped2);
 		
+		animals1 = Stream.of("lions", "bears", "wolves", "wolves", "ant", "ape", "ape");
+		Map<Integer, Optional<Character>> mapGroupedByMapping = animals1.collect(Collectors.groupingBy(String::length, 
+				Collectors.mapping(ss -> ss.charAt(0), Collectors.minBy(Comparator.naturalOrder()))));
+		System.out.println("Map grouped by Mapping is : " + mapGroupedByMapping);
 		
+
 	
-		
-		
 	}
 
 }
