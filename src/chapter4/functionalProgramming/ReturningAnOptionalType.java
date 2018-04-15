@@ -13,22 +13,25 @@ public class ReturningAnOptionalType {
 		// It can contain or not an object
 		Optional<Double> opt = average(90, 100);
 		if (opt.isPresent()) 
-			System.out.println(opt.get());
+			System.out.println("Optional is average of two numbers: " + opt.get());
 		Optional<Double> opt2 = average(); 
 //		System.out.println(opt2.get()); // bad; returns an Exception
 		Object value = null;
 		Optional o = (value == null) ? Optional.empty(): Optional.of(value);
 		Optional o1 = Optional.ofNullable(value);
 		
+		System.out.print("ifPresent() display value of Optional: ");
 		opt.ifPresent(System.out::println);
+		System.out.print("When Optional is empty, ifPresent() does not displays value of Optional: ");
+		opt2.ifPresent(System.out::println);
+		System.out.println();
+		System.out.println("When Optional is empty, orElse() displays value of parameter: " + opt2.orElse(Double.NaN));
+		System.out.println("When Optional is empty, orElseGet() displays value of parameter: " + opt2.orElseGet(() -> Math.random()));
+//		System.out.println("When Optional empty, orEleseThrow() throws an Exception: " + opt2.orElseThrow(() -> new  IllegalStateException()));
 		
-		System.out.println(opt2.orElse(Double.NaN));
-		System.out.println(opt2.orElseGet(() -> Math.random()));
-//		System.out.println(opt2.orElseThrow(() -> new  IllegalStateException()));
-		
-		System.out.println(opt.orElse(Double.NaN));
-		System.out.println(opt.orElseGet(() -> Math.random()));
-		System.out.println(opt.orElseThrow(() -> new  IllegalStateException()));
+		System.out.println("When Optional not empty, orElse() displays its value: " + opt.orElse(Double.NaN));
+		System.out.println("When Optional not empty, orElseGet() displays its value: " + opt.orElseGet(() -> Math.random()));
+		System.out.println("When Optional not empty, orElseThrow() displays its value: " + opt.orElseThrow(() -> new  IllegalStateException()));
 		
 		// Is Optional the same as null?
 
