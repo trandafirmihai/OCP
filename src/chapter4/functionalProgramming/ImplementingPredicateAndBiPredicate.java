@@ -1,5 +1,7 @@
 package chapter4.functionalProgramming;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -33,6 +35,16 @@ public class ImplementingPredicateAndBiPredicate {
 		System.out.println(brownEggs2.test("egg"));
 		System.out.println(otherEggs2.test("egg"));
 		
+		List<String> listOfSweets = new ArrayList<>();
+		Predicate<String> pls = listOfSweets::contains;
+		listOfSweets.add("sugar");
+		listOfSweets.add("icecream");
+		listOfSweets.add("candy");
+		System.out.println("The sweets List is: " + listOfSweets);
+		boolean hasSugar = pls.test("sugar");
+		System.out.println("The sweets List has sugar: " + hasSugar);
+		boolean hasCream = pls.test("cream");
+		System.out.println("The sweets List has cream: " + hasCream);
 	}
 	
 }

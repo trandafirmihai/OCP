@@ -2,6 +2,7 @@ package chapter4.functionalProgramming;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ImplementingSupplier {
@@ -33,7 +34,21 @@ public class ImplementingSupplier {
 		Supplier<ArrayList<String>> sAL = ArrayList::new;
 		ArrayList<String> al1 = sAL.get();
 		al1.add(0, "smth"); // Any other index gives Exception; so use add simple on an empty AL
+		al1.add("smthelse");
+		al1.add(2, "smthnew"); // only indexes 0, 1 or 2 works here
 		System.out.println("The AL is: " + al1);
+		
+		Supplier<List<Integer>> sli = ArrayList::new;
+		System.out.println("Supplier get an empty List? " + sli.get()); // return a List
+		System.out.println("Supplier get the empty List and add an element? " + sli.get().add(2));
+		System.out.println("Supplier get the List and return its size? " + sli.get().size()); // size 0; return an other List
+		sli.get().add(2); // List size 0; return and add to an other List
+		sli.get().add(3); // List size 0; return and add to an other List
+		List<Integer> list = sli.get(); // save the returned List to a variable and then add elements
+		System.out.println("Supplier get the right size of the List now? " + list.size()); // size 0; return an other List
+		list.add(2);
+		System.out.println("Supplier get the right size of the List now? " + list.size());
+		
 		
 	}
 }

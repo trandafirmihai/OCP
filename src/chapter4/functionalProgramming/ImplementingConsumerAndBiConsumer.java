@@ -1,6 +1,8 @@
 package chapter4.functionalProgramming;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -27,6 +29,12 @@ public class ImplementingConsumerAndBiConsumer {
 		
 		System.out.println("The map content is: " + map);
 		
+//		Consumer<List<String>> cls = List::add; // Compile ERROR: cannot make a static reference to the non-static method add
+//		List<String> list = ArrayList::new; // Compile ERROR: the target type of this expression must be a functional interface
+		List<String> list = new ArrayList<>();
+		Consumer<String> cls = list::add;
+		cls.accept("accept");
+		System.out.println("The List has a String element: " + list);
 	}
 
 }
